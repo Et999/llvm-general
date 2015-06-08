@@ -11,6 +11,7 @@
 #include "llvm-c/Core.h"
 
 #include "LLVM/General/Internal/FFI/Instruction.h"
+#include "LLVM/General/Internal/FFI/MDNode.h"
 
 using namespace llvm;
 
@@ -241,7 +242,7 @@ void LLVM_General_GetIndirectBrDests(
 unsigned LLVM_General_GetMetadata(
 	LLVMValueRef i,
 	unsigned *kinds,
-	LLVMValueRef *nodes,
+	LLVMMDNodeRef *nodes,
 	unsigned nKinds
 ) {
 	SmallVector<std::pair<unsigned, MDNode *>, 4> mds;

@@ -19,9 +19,6 @@ foreign import ccall unsafe "LLVMCreateExecutionEngineForModule" createExecution
 foreign import ccall unsafe "LLVMCreateInterpreterForModule" createInterpreterForModule ::
   Ptr (Ptr ExecutionEngine) -> Ptr Module -> Ptr (OwnerTransfered CString) -> IO CUInt
 
-foreign import ccall unsafe "LLVMCreateJITCompilerForModule" createJITCompilerForModule ::
-  Ptr (Ptr ExecutionEngine) -> Ptr Module -> CUInt -> Ptr (OwnerTransfered CString) -> IO CUInt
-
 foreign import ccall unsafe "LLVMCreateMCJITCompilerForModule" createMCJITCompilerForModule ::
   Ptr (Ptr ExecutionEngine) -> Ptr Module -> Ptr MCJITCompilerOptions -> CSize -> Ptr (OwnerTransfered CString) -> IO CUInt
 
@@ -41,9 +38,6 @@ foreign import ccall unsafe "LLVMGetPointerToGlobal" getPointerToGlobal ::
   Ptr ExecutionEngine -> Ptr GlobalValue -> IO (Ptr ())
 
 foreign import ccall unsafe "LLVMLinkInInterpreter" linkInInterpreter :: 
-  IO ()
-
-foreign import ccall unsafe "LLVMLinkInJIT" linkInJIT :: 
   IO ()
 
 foreign import ccall unsafe "LLVMLinkInMCJIT" linkInMCJIT :: 

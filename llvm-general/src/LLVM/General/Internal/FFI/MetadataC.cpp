@@ -4,6 +4,8 @@
 #include "llvm/IR/Metadata.h"
 #include "llvm-c/Core.h"
 
+#include "LLVM/General/Internal/FFI/MDNode.h"
+
 using namespace llvm;
 
 extern "C" {
@@ -25,20 +27,16 @@ unsigned LLVM_General_GetMDKindNames(
 	return ns.size();
 }
 
-unsigned LLVM_General_GetMDNodeNumOperands(LLVMValueRef v) {
-	return unwrap<MDNode>(v)->getNumOperands();
-}
-
-unsigned LLVM_General_MDNodeIsFunctionLocal(LLVMValueRef v) {
-	return unwrap<MDNode>(v)->isFunctionLocal();
+unsigned LLVM_General_GetMDNodeNumOperands(LLVMMDNodeRef v) {
+	return unwrap(v)->getNumOperands();
 }
 
 void LLVM_General_NamedMetadataAddOperands(
 	NamedMDNode *n,
-	LLVMValueRef *ops,
+	LLVMMDNodeRef *ops,
 	unsigned nOps
 ) {
-	for(unsigned i = 0; i != nOps; ++i) n->addOperand(unwrap<MDNode>(ops[i]));
+	for(unsigned i = 0; i != nOps; ++i) n->addOperand(unwrap(ops[i]));
 }
 
 const char *LLVM_General_GetNamedMetadataName(
@@ -54,17 +52,17 @@ unsigned LLVM_General_GetNamedMetadataNumOperands(NamedMDNode *n) {
 	return n->getNumOperands();
 }
 
-void LLVM_General_GetNamedMetadataOperands(NamedMDNode *n, LLVMValueRef *dest) {
+void LLVM_General_GetNamedMetadataOperands(NamedMDNode *n, LLVMMDNodeRef *dest) {
 	for(unsigned i = 0; i != n->getNumOperands(); ++i)
 		dest[i] = wrap(n->getOperand(i));
 }
 
-LLVMValueRef LLVM_General_CreateTemporaryMDNodeInContext(LLVMContextRef c) {
-	return wrap(MDNode::getTemporary(*unwrap(c), ArrayRef<Value *>()));
+LLVMMDNodeRef LLVM_General_CreateTemporaryMDNodeInContext(LLVMContextRef c) {
+	return wrap(MDNode::getTemporary(*unwrap(c), ArrayRef<Metadata *>()));
 }
 
-void LLVM_General_DestroyTemporaryMDNode(LLVMValueRef v) {
-	MDNode::deleteTemporary(unwrap<MDNode>(v));
+void LLVM_General_DestroyTemporaryMDNode(LLVMMDNodeRef v) {
+	MDNode::deleteTemporary(unwrap(v));
 }
 
 }
