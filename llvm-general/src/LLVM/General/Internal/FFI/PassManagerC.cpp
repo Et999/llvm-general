@@ -205,6 +205,27 @@ void LLVM_General_AddBoundsCheckingPass(LLVMPassManagerRef PM) {
 	unwrap(PM)->add(createBoundsCheckingPass());
 }
 
+void LLVM_General_AddDebugGeneratedIRPass(
+	LLVMPassManagerRef PM,
+	LLVMBool hideDebugIntrinsics,
+	LLVMBool hideDebugMetadata,
+	const char *filename,
+	const char *directory
+) {
+	unwrap(PM)->add(
+		createDebugIRPass(
+			hideDebugIntrinsics,
+			hideDebugMetadata,
+			filename,
+			directory
+		)
+	);
+}
+
+void LLVM_General_AddDebugExistingIRPass(LLVMPassManagerRef PM) {
+	unwrap(PM)->add(createDebugIRPass());
+}
+
 void LLVM_General_AddLoopVectorizePass(
 	LLVMPassManagerRef PM,
 	LLVMBool noUnrolling,
