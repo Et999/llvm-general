@@ -15,10 +15,10 @@ import LLVM.General.Internal.FFI.PtrHierarchy
 import LLVM.General.Internal.FFI.LLVMCTypes
 
 foreign import ccall unsafe "LLVMIsAMDString" isAMDString ::
-  Ptr Value -> IO (Ptr MDString)
+  Ptr Metadata -> IO (Ptr MDString)
 
 foreign import ccall unsafe "LLVMIsAMDNode" isAMDNode ::
-  Ptr Value -> IO (Ptr MDNode)
+  Ptr Metadata -> IO (Ptr MDNode)
 
 foreign import ccall unsafe "LLVMGetMDKindIDInContext" getMDKindIDInContext' ::
   Ptr Context -> Ptr CChar -> CUInt -> IO MDKindID
@@ -37,7 +37,7 @@ foreign import ccall unsafe "LLVMGetMDString" getMDString ::
   Ptr MDString -> Ptr CUInt -> IO CString
 
 foreign import ccall unsafe "LLVMMDNodeInContext" createMDNodeInContext' ::
-  Ptr Context -> Ptr (Ptr Value) -> CUInt -> IO (Ptr MDNode)
+  Ptr Context -> Ptr (Ptr Value) -> CUInt -> IO (Ptr Value)
 
 createMDNodeInContext ctx (n, vs) = createMDNodeInContext' ctx vs n
 

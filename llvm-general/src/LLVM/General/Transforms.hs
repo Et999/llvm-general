@@ -189,10 +189,3 @@ defaultMemorySanitizer = MemorySanitizer {
 -- | Defaults for 'ThreadSanitizer'.
 defaultThreadSanitizer = ThreadSanitizer
 
--- | Defaults for 'DebugGeneratedIR'.
-defaultDebugGeneratedIR = DebugGeneratedIR {
-  hideDebugIntrinsics = False,
-  hideDebugMetadata = False,
-  fileName = Nothing,
-  directory = Nothing
-}

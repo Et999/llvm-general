@@ -86,15 +86,19 @@ data User
 
 instance ChildOf Value User
 
+data Metadata
+
+    
 -- | <http://llvm.org/doxygen/classllvm_1_1MDNode.html>
 data MDNode
 
-instance ChildOf Value MDNode
+instance ChildOf Metadata MDNode
 
+    
 -- | <http://llvm.org/doxygen/classllvm_1_1MDString.html>
 data MDString
 
-instance ChildOf Value MDString
+instance ChildOf Metadata MDString
 
 -- | <http://llvm.org/doxygen/classllvm_1_1NamedMDNode.html>
 data NamedMetadata

@@ -32,28 +32,28 @@ instance DecodeM DecodeAST A.Operand (Ptr FFI.Value) where
     c <- liftIO $ FFI.isAConstant v
     if (c /= nullPtr) 
      then
-      return A.ConstantOperand `ap` decodeM c
+         return A.ConstantOperand `ap` decodeM c
      else
-      do
+         return A.LocalReference 
+                    `ap` (decodeM =<< (liftIO $ FFI.typeOf v))
+                    `ap` getLocalName v
+
+instance DecodeM DecodeAST A.Metadata (Ptr FFI.Metadata) where
+  decodeM v = do
         mds <- liftIO $ FFI.isAMDString v
+        mdn <- liftIO $ FFI.isAMDNode v
         if mds /= nullPtr 
          then return A.MetadataStringOperand `ap` decodeM mds
          else
-           do
-             mdn <- liftIO $ FFI.isAMDNode v
-             if mdn /= nullPtr
-              then return A.MetadataNodeOperand `ap` decodeM mdn
-              else
-                return A.LocalReference 
-                         `ap` (decodeM =<< (liftIO $ FFI.typeOf v))
-                         `ap` getLocalName v
+              return A.MetadataNodeOperand `ap` decodeM mdn
 
+                              
 instance DecodeM DecodeAST A.CallableOperand (Ptr FFI.Value) where
   decodeM v = do
     ia <- liftIO $ FFI.isAInlineAsm v
     if ia /= nullPtr
-     then liftM Left (decodeM ia)
-     else liftM Right (decodeM v)
+     then liftM A.InlineAssemblyCallable (decodeM ia)
+     else liftM A.OperandCallable (decodeM v)
 
 instance EncodeM EncodeAST A.Operand (Ptr FFI.Value) where
   encodeM (A.ConstantOperand c) = (FFI.upCast :: Ptr FFI.Constant -> Ptr FFI.Value) <$> encodeM c
@@ -68,15 +68,16 @@ instance EncodeM EncodeAST A.Operand (Ptr FFI.Value) where
       return lv
     return $ case lv of DefinedValue v -> v; ForwardValue v -> v
 
+instance EncodeM EncodeAST A.Metadata (Ptr FFI.Metadata) where
   encodeM (A.MetadataStringOperand s) = do
     Context c <- gets encodeStateContext
     s <- encodeM s
     liftM FFI.upCast $ liftIO $ FFI.mdStringInContext c s
-  encodeM (A.MetadataNodeOperand mdn) = (FFI.upCast :: Ptr FFI.MDNode -> Ptr FFI.Value) <$> encodeM mdn
+  encodeM (A.MetadataNodeOperand mdn) = (FFI.upCast :: Ptr FFI.MDNode -> Ptr FFI.Metadata) <$> encodeM mdn
 
 instance EncodeM EncodeAST A.CallableOperand (Ptr FFI.Value) where
-  encodeM (Right o) = encodeM o
-  encodeM (Left i) = liftM (FFI.upCast :: Ptr FFI.InlineAsm -> Ptr FFI.Value) (encodeM i)
+  encodeM (A.OperandCallable o) = encodeM o
+  encodeM (A.InlineAssemblyCallable i) = liftM (FFI.upCast :: Ptr FFI.InlineAsm -> Ptr FFI.Value) (encodeM i)
 
 instance EncodeM EncodeAST A.MetadataNode (Ptr FFI.MDNode) where
   encodeM (A.MetadataNode ops) = scopeAnyCont $ do
