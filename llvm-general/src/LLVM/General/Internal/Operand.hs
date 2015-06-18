@@ -93,13 +93,7 @@ instance DecodeM DecodeAST [Maybe A.Operand] (Ptr FFI.MDNode) where
     decodeM (n, ops)
 
 instance DecodeM DecodeAST A.MetadataNode (Ptr FFI.MDNode) where
-  decodeM p = scopeAnyCont $ do
-    fl <- decodeM =<< liftIO (FFI.mdNodeIsFunctionLocal p)
-    if fl
-     then
-       return A.MetadataNode `ap` decodeM p
-     else
-       return A.MetadataNodeReference `ap` getMetadataNodeID p
+  decodeM p = scopeAnyCont $ return A.MetadataNodeReference `ap` getMetadataNodeID p
 
 getMetadataDefinitions :: DecodeAST [A.Definition]
 getMetadataDefinitions = fix $ \continue -> do

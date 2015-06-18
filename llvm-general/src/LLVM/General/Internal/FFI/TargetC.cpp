@@ -335,8 +335,9 @@ LLVMBool LLVM_General_TargetMachineEmit(
 		*ErrorMessage = strdup("No DataLayout in TargetMachine");
 		return true;
 	}
+	unwrap(M)->setDataLayout(td); 
 	PassManager passManager;
-	passManager.add(new DataLayoutPass(*td));
+	passManager.add(new DataLayoutPass());
 	if (tm.addPassesToEmitFile(passManager, destf, unwrap(codeGenFileType))) {
 		*ErrorMessage = strdup("TargetMachine can't emit a file of this type");
 		return true;

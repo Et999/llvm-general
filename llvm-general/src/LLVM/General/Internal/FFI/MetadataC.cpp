@@ -29,10 +29,6 @@ unsigned LLVM_General_GetMDNodeNumOperands(LLVMValueRef v) {
 	return unwrap<MDNode>(v)->getNumOperands();
 }
 
-unsigned LLVM_General_MDNodeIsFunctionLocal(LLVMValueRef v) {
-	return unwrap<MDNode>(v)->isFunctionLocal();
-}
-
 void LLVM_General_NamedMetadataAddOperands(
 	NamedMDNode *n,
 	LLVMValueRef *ops,
@@ -55,12 +51,14 @@ unsigned LLVM_General_GetNamedMetadataNumOperands(NamedMDNode *n) {
 }
 
 void LLVM_General_GetNamedMetadataOperands(NamedMDNode *n, LLVMValueRef *dest) {
-	for(unsigned i = 0; i != n->getNumOperands(); ++i)
-		dest[i] = wrap(n->getOperand(i));
+  LLVMContext &Context = *unwrap(LLVMGetGlobalContext());
+  for(unsigned i = 0; i != n->getNumOperands(); ++i)
+    dest[i] = wrap(MetadataAsValue::get(Context,n->getOperand(i)));
 }
 
 LLVMValueRef LLVM_General_CreateTemporaryMDNodeInContext(LLVMContextRef c) {
-	return wrap(MDNode::getTemporary(*unwrap(c), ArrayRef<Value *>()));
+
+  return wrap(MetadataAsValue::get(*unwrap(c),MDNode::getTemporary(*unwrap(c), ArrayRef<Metadata *>())));
 }
 
 void LLVM_General_DestroyTemporaryMDNode(LLVMValueRef v) {

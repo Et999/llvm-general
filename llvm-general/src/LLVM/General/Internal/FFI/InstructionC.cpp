@@ -246,10 +246,12 @@ unsigned LLVM_General_GetMetadata(
 ) {
 	SmallVector<std::pair<unsigned, MDNode *>, 4> mds;
 	unwrap<Instruction>(i)->getAllMetadata(mds);
+
+	LLVMContext &Context = *unwrap(LLVMGetGlobalContext());
 	if (mds.size() <= nKinds) {
 		for(unsigned i=0; i<mds.size(); ++i) {
 			kinds[i] = mds[i].first;
-			nodes[i] = wrap(mds[i].second);
+			nodes[i] = wrap(MetadataAsValue::get(Context,mds[i].second));
 		}
 	}
 	return mds.size();

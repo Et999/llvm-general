@@ -53,8 +53,6 @@ foreign import ccall unsafe "LLVM_General_GetMDNodeNumOperands" getMDNodeNumOper
 foreign import ccall unsafe "LLVMGetMDNodeOperands" getMDNodeOperands ::
   Ptr MDNode -> Ptr (Ptr Value) -> IO ()
 
-foreign import ccall unsafe "LLVM_General_MDNodeIsFunctionLocal" mdNodeIsFunctionLocal ::
-  Ptr MDNode -> IO LLVMBool
 
 foreign import ccall unsafe "LLVM_General_GetNamedMetadataName" getNamedMetadataName ::
   Ptr NamedMetadata -> Ptr CUInt -> IO (Ptr CChar)

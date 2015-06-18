@@ -19,8 +19,7 @@
 	macro(ConstantStruct) \
 	macro(ConstantVector) \
 	macro(ConstantPointerNull) \
-	macro(MDNode) \
-	macro(MDString) \
+	macro(MetadataAsValue) \
 	macro(InlineAsm) \
 	macro(Instruction)
 
